@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Player Home
+{% endblock %}
+
+{% block content %}
+    <h1>Welcome, {{user.username}}</h1>
+    These are your active games:
+
+    <ul>
+        {% for g in games %}
+            <li>Game {{ g.id }}: {{ g.first_player}} vs {{ g.second_player }}</li>
+        {% endfor %}
+    </ul>
+
+    These are the drawed games for everyone:
+    <ul>
+        {% for g in drawed_games %}
+            <li>Game {{ g.id }}: {{ g.first_player}} vs {{ g.second_player }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

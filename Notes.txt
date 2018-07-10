@@ -1,0 +1,72 @@
+### start a virtual environment with python and django
+$ python3 -m venv django-env
+$ source django-env/bin/activate
+$ pip install django
+
+### Create a superuser
+$ python manage.py createsuperuser
+
+### Run the server
+$ python manage.py runserver
+
+### Start a new App
+$ python manage.py startapp appname
+
+# in settings.py
+INSTALLED_APPS = [..., "appname"]
+
+### Add a Model
+# Step 1: Change Model code in models.py
+from django.db import models
+class Move(models.Model):
+	# make field nullable (default is non-null)
+	Models.IntegerField(null = True)
+
+	# allow empty values in forms (not db-related!)
+	Models.CharField(blank=True)
+
+	#default value
+	Models.CharField(default = 'F')
+
+# Step 2: Generate migration script (check it!)
+$ python manage.py makemigrations
+# Optional: Show migrations
+$ python manage.py showmigrations
+# Optional: Show SQL for specific migration
+$ python manage.py sqlmigrate appname migrationname
+# Step 3: Run migrations
+$ python manage.py migrate
+
+### Registering Models with the Admin Site
+# in admin.py
+from django.contrib import Admin
+from .models import *ModelName*
+
+admin.site.register(*ModelName*)
+****OR****
+@admin.register(*ModelName*)
+class ModelNameAdmin(admin.ModelAdmin):
+    list_display = ('comma delimited list of fields in list view')
+    list_editable = ('tuple that makes a column a dropdown',)
+
+#. Adding __str__ to Models is good practice
+
+### Using the Models API
+$ python manage.py shell
+>>> from gameplay.modles import Game, Move #import your models
+>>> g=Game.Objects.get(pk=1) #get a single object by PK from model Manager
+>>> g.save() #run after updating any fields you want to save to db
+>>> Game.objects.filter(status='F') #all games where status is F
+>>> Game.objects.exlude(status='F') #all games not F
+# One-to-Many Relations
+- defined by a ForeignKey field on the "many" side of relation
+- "One" side gets a xxx_set attribute
+-- xxx is name of related model.  This is a "related manager" obj. 
+- g.move_set.add(m)
+
+### Passing Data to a Template
+Pass data as a dicitonary as third argument to render() in the view.
+Create a "query set" class that inherits models.QuerySet that does all your filtering and fetching. Seperation of concenrs.
+Use Q to add ORs to filters
+Make your model inherit models.Model and then you can override the defualt manager with your query set class.
+
